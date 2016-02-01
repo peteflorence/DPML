@@ -13,6 +13,13 @@ def getData(name):
     Y = data[1:2].T
     return X, Y
 
+def getDataDPML(name):
+    data = np.genfromtxt(name, delimiter=',')
+    # Returns column matrices
+    X = data[:,0:-1]
+    Y = data[:,-1]
+    return X, Y
+
 class LinearRegression:
 
     def __init__(self, x, y, M, phi=None, rescaleFeatures=False):
@@ -20,6 +27,7 @@ class LinearRegression:
         self.y = 1.0*np.reshape(y,(self.N,))
         self.x = 1.0*np.reshape(x,(np.size(x),))
         self.numFeatures = M+1
+        print self.numFeatures
 
         self.lam = 0.1
 
@@ -155,6 +163,12 @@ class LinearRegression:
     def fromFile(filename, M):
         x,y = getData(filename)
         return LinearRegression(x,y,M)
+
+    @staticmethod
+    def DPMLfromFile(filename):
+        x,y = getDataDPML(filename)
+        return LinearRegression(x,y,1,phi=x)
+
 
     @staticmethod
     def fromBlog(type='train', rescaleFeatures=False):
