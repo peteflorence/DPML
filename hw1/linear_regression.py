@@ -47,6 +47,20 @@ class LinearRegression:
         for i in range(0,self.numFeatures):
             self.phi[:,i] = np.power(self.x,i)
 
+    def purgeOfCollisions(self):
+        self.phi = self.phi[self.phi != 0]
+
+
+    def inverseFeatures(self):
+        for i, rowvalue in enumerate(self.phi):
+            for j, value in enumerate(rowvalue):
+                self.phi[i,j]= 1.0 / value
+
+    def inverseSquaredFeatures(self):
+        for i, rowvalue in enumerate(self.phi):
+            for j, value in enumerate(rowvalue):
+                self.phi[i,j]= (1.0 / value) ** 2
+
     # applies feature normalization to the matrix Phi
     def rescaleFeatures(self, method="interval"):
 
