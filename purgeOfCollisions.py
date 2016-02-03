@@ -13,7 +13,7 @@ def getData(name):
     #Y = data[:,-1]
     return data
 
-filename = 'sampleML_less_aggressive'
+filename = 'sampleML_20_sensors_pete_params'
 data = getData(filename + ".csv")
 print np.shape(data)
 

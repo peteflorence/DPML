@@ -47,10 +47,6 @@ class LinearRegression:
         for i in range(0,self.numFeatures):
             self.phi[:,i] = np.power(self.x,i)
 
-    def purgeOfCollisions(self):
-        self.phi = self.phi[self.phi != 0]
-
-
     def inverseFeatures(self):
         for i, rowvalue in enumerate(self.phi):
             for j, value in enumerate(rowvalue):

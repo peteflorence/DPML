@@ -11,7 +11,7 @@ from gradient_descent import GradientDescent
 
 class NeuralNet:
 
-    def __init__(self, x, t, useSoftmax=True, lam=None, M=None):
+    def __init__(self, x, t, useSoftmax=True, lam=None, M=None, variant='Class'):
         self.filename = None
 
         self.N = np.size(t)
@@ -28,11 +28,17 @@ class NeuralNet:
 
         self.t = np.reshape(t,(self.N,))
 
-        # transform the k-description into a K-dimensional vector
-        self.K = int(max(self.t))           # this assumes that the output labels are originally non-negative integers counting up from 1  (1, 2, ...) with no gaps
-        self.T = np.zeros((self.K,self.N))
-        for i in range(self.N):
-            self.T[self.t[i] - 1, i] = 1
+        if variant =='Class':
+            # transform the k-description into a K-dimensional vector
+            self.K = int(max(self.t))           # this assumes that the output labels are originally non-negative integers counting up from 1  (1, 2, ...) with no gaps
+            self.T = np.zeros((self.K,self.N))
+            for i in range(self.N):
+                self.T[self.t[i] - 1, i] = 1
+        elif variant == 'Reg':
+            self.T = self.t
+            self.K = 1
+        else:
+            raise Exception('I only do Class or Reg')
 
         self.x = x
         self.D = np.shape(x)[1]     # this is the dimension of the input data
@@ -115,8 +121,11 @@ class NeuralNet:
 
         # compute output of each unit via activation function
         # size K x 1
-        self.y = self.sigma(self.a_outputs)
+        ## self.y = self.sigma(self.a_outputs)
+        ## this was for classification
 
+        ## for regression
+        self.y = self.a_outputs
 
     # deprecated
     def backPropSingle(self, a_hidden):
@@ -335,7 +344,7 @@ class NeuralNet:
 
     def train(self, w_list_initial='random', useSGD=False, stepSize=0.001, maxFunctionCalls=3000, verbose=True, tol=None,
               storeIterValues=True, varname='toy_data', lam=None):
-        self.reloadTrainingData(varname)
+        #self.reloadTrainingData(varname)
         if verbose: 
             start = time.time()
             print "Actual data"
@@ -452,6 +461,21 @@ class NeuralNet:
 
         nn = NeuralNet(X,T, lam=lam, M=M)
         nn.filename = file
+        return nn
+
+    @staticmethod
+    def fromCSV(filename, lam=None, M=None, variant='Reg'):
+        data = np.genfromtxt(filename, delimiter=',')
+        
+        X = data[:,0:-1]
+        T = data[:,-1]
+
+        print np.shape(X)
+        print np.shape(T)
+
+
+        nn = NeuralNet(X,T, lam=lam, M=M, variant=variant)
+        nn.filename = filename
         return nn
 
 
